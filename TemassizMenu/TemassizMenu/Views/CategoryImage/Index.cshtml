@@ -1,0 +1,161 @@
+﻿@using EntityLayer.Entities
+@model List<CategoryImage>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!--Kategori Resmi Ekle Modal-->
+<div class="modal" tabindex="-1" id="kategori-resmi-ekle-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategori Resmi Ekle</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("KategoriResmiEkle", "CategoryImage", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Resim Adı</label>
+                        <input type="text" name="Name" class="form-control col-8" required autocomplete="off" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Resim Seç</label>
+                        <input type="file" name="file" class="form-control col-8" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Kategori Seç</label>
+                        <select class="form-select col-8" name="CategoryID">
+                            @foreach (Category item in ViewBag.KategoriListesi)
+                            {
+                                <option value="@item.Id">@item.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Ekle</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<!--Kategori Resmi Sil Modal-->
+<div class="modal" tabindex="-1" id="kategori-resmi-sil-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategori Resmi Sil</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="submit" class="btn btn-primary" id="btn-kategori-resmi-sil-onayla">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container icerik">
+
+    <div class="row">
+        <div class="col-md-12">
+            <a href="#kategori-resmi-ekle-modal" class="btn btn-primary" data-toggle="modal">Kategori Resmi Ekle</a>
+        </div>
+    </div>
+
+    <!--Uyarı-->
+    @if (TempData["UyariMesaji"] != null)
+    {
+        <div class="alert alert-dark alert-uyari" role="alert">
+            <span>X</span>
+            @TempData["UyariMesaji"]
+        </div>
+    }
+
+    <table class="table table-striped myTable">
+        <thead>
+            <tr>
+                <th>Resim Adı</th>
+                <th>Resim</th>
+                <th>Kategori</th>
+                <th>Sil</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (CategoryImage item in Model)
+            {
+                <tr>
+                    <td><a href="#">@item.Name</a></td>
+                    <td><img src="~/KategoriResimleri/@item.Path" height="50" width="50" /></td>
+                    <td><a href="#">@item.Category.CategoryName</a></td>
+                    <td><a href="#kategori-resmi-sil-modal" data-toggle="modal" data-id="@item.Id" data-ad="@item.Name" class="btn-kategori-resmi-sil"><i class="fa-solid fa-trash-can"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+@section scripts{
+
+    <script>
+
+        $('.alert-uyari span').click(function () {
+            $('.alert-uyari').css({
+                'display': 'none'
+            });
+        });
+
+        $('.btn-kategori-resmi-sil').click(function () {
+            var katId = $(this).data('id');
+            var katAdi = $(this).data('ad');
+
+            $('#kategori-resmi-sil-modal .modal-body p').html(katAdi + ' isimli resmi silmek istediğinize emin misiniz?');
+            $('#btn-kategori-resmi-sil-onayla').data('id', katId);
+        });
+
+        $('#btn-kategori-resmi-sil-onayla').click(function () {
+            var katId = $(this).data('id');
+
+            var obj = {};
+            obj.id = katId;
+
+            $.ajax({
+                type: 'POST',
+                url: '/CategoryImage/KategoriResmiSil',
+                data: JSON.stringify(obj),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (result) {
+                    if (result == "1") {
+                        window.location.replace('/CategoryImage/Index');
+                    }
+                    else if (result == "2") {
+                        window.location.replace('/CategoryImage/Index');
+                    }
+                },
+                error: function (err) {
+                    console.log(err.statusText);
+                }
+            });
+        });
+
+    </script>
+
+}

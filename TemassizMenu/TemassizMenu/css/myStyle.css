@@ -1,0 +1,40 @@
+﻿.icerik {
+    margin-top: 50px;
+}
+.alert-uyari {
+    width: 200px;
+    position: absolute;
+    bottom: 60px;
+    right: 100px;
+}
+.alert-uyari span {
+    top: 5px;
+    right: 5px;
+    position: absolute;
+}
+.alert-uyari span:hover {
+    cursor: pointer;
+}
+.myTable {
+    margin-top: 50px;
+}
+.myTable a {
+    font-family: 'Montserrat';
+    color: white;
+    text-decoration: none;
+}
+.category-product-item {
+    padding: 0;
+}
+.category-product-item img {
+    height: 100%;
+    width: 100%;
+    opacity: 0.5;
+}
+.category-product-name {
+    position: absolute;
+    bottom: 0;
+    font-family: 'Montserrat';
+    font-weight: 600;
+    color: #ffffff;
+}

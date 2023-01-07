@@ -1,0 +1,28 @@
+﻿@using EntityLayer.Entities
+@model List<Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Kategori Adı</th>
+            <th>Resim</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Category item in Model)
+        {
+            
+            <tr>
+                <td>@item.CategoryName</td>
+                <td><img src="~/KategoriResimleri/@item.CategoryImages.FirstOrDefault(x=>x.CategoryID==item.Id).Path" height="50" width="50" /></td>
+            </tr>
+
+        }
+    </tbody>
+</table>

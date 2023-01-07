@@ -1,0 +1,185 @@
+﻿@using EntityLayer.Entities
+@model List<Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--Kategori Ekle Modal-->
+<div class="modal" tabindex="-1" id="kategori-ekle-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategori Ekle</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("KategoriEkle", "Category", FormMethod.Post))
+            {
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Kategori Adı</label>
+                        <input type="text" name="CategoryName" class="form-control col-8" required autocomplete="off" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Ekle</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Kategori Sil Modal-->
+<div class="modal" tabindex="-1" id="kategori-sil-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategori Sil</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="submit" class="btn btn-primary" id="btn-kategori-sil-onayla">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Kategori Düzenle Modal-->
+<div class="modal" tabindex="-1" id="kategori-duzenle-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategori Düzenle</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("KategoriDuzenle", "Category", FormMethod.Post))
+            {
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" name="Id" value="" id="txtKatId" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Kategori Adı</label>
+                        <input type="text" name="CategoryName" class="form-control col-8" required autocomplete="off" id="txtKatAdi" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Onayla</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div class="container icerik">
+
+    <!--Yeni Kategori-->
+    <div class="row">
+        <div class="col-md-12">
+            <a href="#kategori-ekle-modal" class="btn btn-primary" data-toggle="modal">Kategori Ekle</a>
+        </div>
+    </div>
+
+    <!--Uyarı-->
+    @if (TempData["UyariMesaji"] != null)
+    {
+        <div class="alert alert-dark alert-uyari" role="alert">
+            <span>X</span>
+            @TempData["UyariMesaji"]
+        </div>
+    }
+
+
+    <table class="table table-striped myTable">
+        <thead>
+            <tr>
+                <th>Kategori Adı</th>
+                <th>Sil</th>
+                <th>Düzenle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Category item in Model)
+            {
+                <tr>
+                    <td><a href="#">@item.CategoryName</a></td>
+                    <td><a href="#kategori-sil-modal" class="btn-kategori-sil" data-toggle="modal" data-id="@item.Id" data-ad="@item.CategoryName"><i class="fa-solid fa-trash-can"></i></a></td>
+                    <td><a href="#kategori-duzenle-modal" class="btn-kategori-duzenle" data-toggle="modal" data-id="@item.Id" data-ad="@item.CategoryName"><i class="fa-solid fa-square-pen"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</div>
+
+@section scripts{
+
+    <script>
+
+        $('.alert-uyari span').click(function () {
+            $('.alert-uyari').css({
+                'display': 'none'
+            });
+        });
+
+        $('.btn-kategori-sil').click(function () {
+            var katID = $(this).data('id');
+            var katAdi = $(this).data('ad');
+
+            $('#kategori-sil-modal .modal-body p').html(katAdi + ' isimli kategoriyi silmek istediğinize emin misiniz?')
+            $('#btn-kategori-sil-onayla').data('id', katID);
+            $('#btn-kategori-sil-onayla').data('ad', katAdi);
+        });
+
+        $('#btn-kategori-sil-onayla').click(function () {
+            var katID = $(this).data('id');
+
+            var obj = {};
+            obj.id = katID;
+
+            $.ajax({
+                type: 'POST',
+                url: '/Category/KategoriSil',
+                data: JSON.stringify(obj),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (result) {
+                    if (result == "1") {
+                        window.location.replace('/Category/Index');
+                    }
+                    else if (result == "2") {
+                        window.location.replace('/Category/Index');
+                    }
+                },
+                error: function (err) {
+                    console.log(err.statusText);
+                }
+            });
+        });
+
+        $('.btn-kategori-duzenle').click(function () {
+            var katID = $(this).data('id');
+            var katAdi = $(this).data('ad');
+
+            $('#txtKatId').val(katID);
+            $('#txtKatAdi').val(katAdi);
+        });
+
+    </script>
+
+}
+

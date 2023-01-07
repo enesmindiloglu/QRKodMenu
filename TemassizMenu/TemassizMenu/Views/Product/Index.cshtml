@@ -1,0 +1,224 @@
+﻿@using EntityLayer.Entities
+@model List<Product>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<!--Ürün Ekle Modal-->
+<div class="modal" tabindex="-1" id="urun-ekle-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ürün Ekle</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("UrunEkle", "Product", FormMethod.Post))
+            {
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Ürün Adı</label>
+                        <input type="text" name="ProductName" class="form-control col-8" required autocomplete="off" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Ürün Fiyatı</label>
+                        <input type="number" name="Price" class="form-control col-8" required autocomplete="off" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Kategori Seç</label>
+                        <select class="form-select col-8" name="CategoryID">
+                            @foreach (Category item in ViewBag.KategoriListesi)
+                            {
+                                <option value="@item.Id">@item.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Ekle</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!--Ürün Sil Modal-->
+<div class="modal" tabindex="-1" id="urun-sil-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ürün Sil</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button type="submit" class="btn btn-primary" id="btn-urun-sil-onayla">Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Ürün Düzenle Modal-->
+<div class="modal" tabindex="-1" id="urun-duzenle-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategori Düzenle</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm("UrunDuzenle", "Product", FormMethod.Post))
+            {
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <input type="hidden" name="Id" value="" id="txtUrunId" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Ürün Adı</label>
+                        <input type="text" name="ProductName" class="form-control col-8" required autocomplete="off" id="txtUrunAdi" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Ürün Fiyatı</label>
+                        <input type="number" name="Price" class="form-control col-8" required autocomplete="off" id="txtFiyat" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label text-dark">Kategori Seç</label>
+                        <select class="form-select col-8" name="CategoryID" id="slcKategori">
+                            @foreach (Category item in ViewBag.KategoriListesi)
+                            {
+                                <option value="@item.Id">@item.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                    <button type="submit" class="btn btn-primary">Onayla</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container icerik">
+
+    <!--Yeni Ürün-->
+    <div class="row">
+        <div class="col-md-12">
+            <a href="#urun-ekle-modal" class="btn btn-primary" data-toggle="modal">Ürün Ekle</a>
+        </div>
+    </div>
+
+    <!--Uyarı-->
+    @if (TempData["UyariMesaji"] != null)
+    {
+        <div class="alert alert-dark alert-uyari" role="alert">
+            <span>X</span>
+            @TempData["UyariMesaji"]
+        </div>
+    }
+
+
+    <table class="table table-striped myTable">
+        <thead>
+            <tr>
+                <th>Ürün Adı</th>
+                <th>Fiyatı</th>
+                <th>Kategori</th>
+                <th>Sil</th>
+                <th>Düzenle</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Product item in Model)
+            {
+                <tr>
+                    <td><a href="#">@item.ProductName</a></td>
+                    <td><a href="#">@String.Format("{0:C2}", item.Price)</a></td>
+                    <td><a href="#">@item.Category.CategoryName</a></td>
+                    <td><a href="#urun-sil-modal" class="btn-urun-sil" data-toggle="modal" data-id="@item.Id" data-ad="@item.ProductName"><i class="fa-solid fa-trash-can"></i></a></td>
+                    <td><a href="#urun-duzenle-modal" class="btn-urun-duzenle" data-toggle="modal" data-id="@item.Id" data-ad="@item.ProductName" data-fiyat="@item.Price" data-kat="@item.CategoryID"><i class="fa-solid fa-square-pen"></i></a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+@section scripts{
+
+    <script>
+
+        $('.alert-uyari span').click(function () {
+            $('.alert-uyari').css({
+                'display': 'none'
+            });
+        });
+
+        $('.btn-urun-sil').click(function () {
+            var urunID = $(this).data('id');
+            var urunAdi = $(this).data('ad');
+
+            $('#urun-sil-modal .modal-body p').html(urunAdi + ' isimli ürünü silmek istediğinize emin misiniz?');
+            $('#btn-urun-sil-onayla').data('id', urunID);
+        });
+
+        $('#btn-urun-sil-onayla').click(function () {
+            var urunID = $(this).data('id');
+
+            var obj = {};
+            obj.id = urunID;
+
+            $.ajax({
+                type: 'POST',
+                url: '/Product/UrunSil',
+                data: JSON.stringify(obj),
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                success: function (result) {
+                    if (result == "1") {
+                        window.location.replace('/Product/Index');
+                    }
+                    else if (result == "2") {
+                        window.location.replace('/Product/Index');
+                    }
+                },
+                error: function (err) {
+                    console.log(err.statusText);
+                }
+            });
+        });
+
+        $('.btn-urun-duzenle').click(function () {
+            var urunID = $(this).data('id');
+            var urunAdi = $(this).data('ad');
+            var urunFiyati = parseFloat($(this).data('fiyat'));
+            var urunKatId = $(this).data('kat');
+
+            $('#txtUrunId').val(urunID);
+            $('#txtUrunAdi').val(urunAdi);
+            $('#txtFiyat').val(urunFiyati);
+            $('#slcKategori').val(urunKatId);
+
+        });
+
+    </script>
+
+}

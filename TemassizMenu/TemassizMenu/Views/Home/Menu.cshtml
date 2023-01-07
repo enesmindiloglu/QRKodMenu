@@ -1,0 +1,64 @@
+﻿@using EntityLayer.Entities
+@model List<Product>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Product Admin - Dashboard HTML Template</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+    <!-- https://fonts.google.com/specimen/Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="~/css/fontawesome.min.css" rel="stylesheet" />
+    <link href="~/fontawesome-free-6.2.1-web/css/all.min.css" rel="stylesheet" />
+    <!-- https://fontawesome.com/ -->
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/bootstrap-5.3.0-alpha1-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- https://getbootstrap.com/ -->
+    <link href="~/css/templatemo-style.css" rel="stylesheet" />
+    <!--
+    Product Admin CSS Template
+    https://templatemo.com/tm-524-product-admin
+    -->
+    <link href="~/css/myStyle.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <table class="table table-striped myTable">
+            <tbody>
+                @foreach (Product item in Model)
+                {
+                    <tr>
+                        <td><a href="#">@item.ProductName</a></td>
+                        <td><a href="#">@String.Format("{0:C2}", item.Price)</a></td>
+                        <td><img src="~/UrunResimleri/@item.ProductImages.FirstOrDefault(x=>x.ProductID==item.Id).Path" height="50" width="50" /></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <!-- https://jquery.com/download/ -->
+    <script src="~/js/moment.min.js"></script>
+    <!-- https://momentjs.com/ -->
+    <script src="~/js/Chart.min.js"></script>
+    <!-- http://www.chartjs.org/docs/latest/ -->
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/bootstrap-5.3.0-alpha1-dist/js/bootstrap.min.js"></script>
+    <script src="~/bootstrap-5.3.0-alpha1-dist/js/bootstrap.bundle.min.js"></script>
+    <!-- https://getbootstrap.com/ -->
+    <script src="~/js/tooplate-scripts.js"></script>
+
+</body>
+</html>
